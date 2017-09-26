@@ -1,4 +1,4 @@
-package ticketseller;
+package ticketseller.domain;
 
 public enum Banknote {
     TWENTYFIVE(25),

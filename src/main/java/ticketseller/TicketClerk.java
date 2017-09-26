@@ -1,20 +1,20 @@
 package ticketseller;
 
-import java.util.EnumMap;
-import java.util.Map;
+import ticketseller.domain.Banknote;
+import ticketseller.domain.ChangeNotPossibleException;
 
 class TicketClerk {
-    // TODO Cashier class with put and get features.
-    private Map<Banknote, Integer> cashier;
+    private Cashier cashier;
+    private Integer priceOfTicket = 25;
 
     TicketClerk() {
-        cashier = new EnumMap<>(Banknote.class);
+        cashier = new Cashier(100);
     }
 
-    String tickets(int[] input) {
+    void tickets(int[] input) throws ChangeNotPossibleException {
         // Handle when there is nobody
         if (input.length == 0){
-            return "YES";
+            return;
         }
 
         // Handle invalid inputs
@@ -27,9 +27,34 @@ class TicketClerk {
 
         for (int i : input) {
             Banknote current = Banknote.getByValue(i);
-            cashier.get(current);
-        }
 
-        return "YES";
+            if (giveChange(current)) {
+                cashier.in(current);
+            }
+            else {
+                throw new ChangeNotPossibleException();
+            }
+
+        }
+    }
+
+    private boolean giveChange(Banknote banknote) {
+        boolean canGiveChange = false;
+
+        if (banknote == Banknote.TWENTYFIVE) {
+            canGiveChange = true;
+        }
+        else if (banknote == Banknote.FIFTY) {
+            canGiveChange = (cashier.out(Banknote.TWENTYFIVE));
+        }
+        // TODO - This can make the state of the cashier inconsistent.
+        else if (banknote == Banknote.HUNDRED) {
+            canGiveChange = (cashier.out(Banknote.FIFTY) && cashier.out(Banknote
+                    .TWENTYFIVE) ||
+                    cashier.out(Banknote.TWENTYFIVE) && cashier.out(Banknote
+                            .TWENTYFIVE) && cashier.out(Banknote.TWENTYFIVE));
+
+        }
+        return canGiveChange;
     }
 }
