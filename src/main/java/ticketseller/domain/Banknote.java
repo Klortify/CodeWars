@@ -11,10 +11,6 @@ public enum Banknote {
         value = i;
     }
 
-    public int value() {
-        return value;
-    }
-
     public static Banknote getByValue(int i){
         if (i == 25){
             return TWENTYFIVE;
