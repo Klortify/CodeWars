@@ -5,13 +5,24 @@ import ticketseller.domain.ChangeNotPossibleException;
 
 class TicketClerk {
     private Cashier cashier;
-    private Integer priceOfTicket = 25;
 
     TicketClerk() {
         cashier = new Cashier(100);
     }
 
-    void tickets(int[] input) throws ChangeNotPossibleException {
+    public String work(int[] input){
+        String result;
+        try {
+            tickets(input);
+            result = "YES";
+        } catch (ChangeNotPossibleException e) {
+            System.out.println(e.getMessage());
+            result = "NO";
+        }
+        return result;
+    }
+
+    private void tickets(int[] input) throws ChangeNotPossibleException {
         // Handle when there is nobody
         if (input.length == 0){
             return;
@@ -32,9 +43,8 @@ class TicketClerk {
                 cashier.in(current);
             }
             else {
-                throw new ChangeNotPossibleException();
+                throw new ChangeNotPossibleException(current);
             }
-
         }
     }
 
@@ -45,15 +55,32 @@ class TicketClerk {
             canGiveChange = true;
         }
         else if (banknote == Banknote.FIFTY) {
-            canGiveChange = (cashier.out(Banknote.TWENTYFIVE));
+            canGiveChange = cashier.out(Banknote.TWENTYFIVE);
         }
-        // TODO - This can make the state of the cashier inconsistent.
         else if (banknote == Banknote.HUNDRED) {
-            canGiveChange = (cashier.out(Banknote.FIFTY) && cashier.out(Banknote
-                    .TWENTYFIVE) ||
-                    cashier.out(Banknote.TWENTYFIVE) && cashier.out(Banknote
-                            .TWENTYFIVE) && cashier.out(Banknote.TWENTYFIVE));
+            canGiveChange = changeHundred();
 
+        }
+        return canGiveChange;
+    }
+
+    private boolean changeHundred() {
+        boolean canGiveChange;
+
+        // This is algorithmically the preferred way to change 100$
+        if (cashier.hasOne(Banknote.TWENTYFIVE) && cashier.hasOne(Banknote.FIFTY)) {
+            cashier.out(Banknote.FIFTY);
+            cashier.out(Banknote.TWENTYFIVE);
+            canGiveChange = true;
+        }
+        else if (cashier.has(Banknote.TWENTYFIVE, 3)) {
+            cashier.out(Banknote.TWENTYFIVE);
+            cashier.out(Banknote.TWENTYFIVE);
+            cashier.out(Banknote.TWENTYFIVE);
+            canGiveChange = true;
+        }
+        else {
+            canGiveChange = false;
         }
         return canGiveChange;
     }

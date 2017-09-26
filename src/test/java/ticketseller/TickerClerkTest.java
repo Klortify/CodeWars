@@ -17,28 +17,28 @@ public class TickerClerkTest {
     public void ignoreInvalidBanknotes(){
         int[] input = {25,25,50,10};
 
-        clerk.tickets(input);
+        clerk.work(input);
     }
 
     @Test
     public void shouldSayYesWhenNobodyComes(){
 //        int[] input = new int[]{};
 
-        String output = clerk.tickets(new int[]{});
+        String output = clerk.work(new int[]{});
 
         Assert.assertTrue(output.matches("YES"));
     }
 
     @Test(dataProvider = "Sellable")
     public void shouldSayYes(int... input){
-        String output = clerk.tickets(input);
+        String output = clerk.work(input);
 
         Assert.assertEquals(output, "YES");
     }
 
     @Test(dataProvider = "nonSellable")
     public void shouldSayNo(int... input){
-        String output = clerk.tickets(input);
+        String output = clerk.work(input);
 
         Assert.assertEquals(output, "NO");
     }
@@ -48,10 +48,12 @@ public class TickerClerkTest {
 
         return new Object[][]{
                 {25},
-                {50},
                 {25,25,50},
                 {25,25,25,100},
-                {25,50,25,100}
+                {25,50,25,100},
+                {25,50,25,100},
+                {25,25,25,25,50,100},
+                {25,25,25,25,50,100,50,50}  // tricky
         };
     }
 
@@ -59,11 +61,10 @@ public class TickerClerkTest {
     public Object[][] nonSellableScenarios(){
 
         return new Object[][]{
-                {25},
                 {50},
-                {25,25,50},
-                {25,25,25,100},
-                {25,50,25,100}
+                {100},
+                {25,100},
+                {25,25,50,50,50}
         };
     }
 

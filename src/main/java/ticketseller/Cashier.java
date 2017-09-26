@@ -6,14 +6,14 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public class Cashier {
-    private Map<Banknote, Integer> register;
+    private Map<Banknote, Integer> banknotes;
     private int capacity;
 
     public Cashier(int capacity) {
         this.capacity = capacity;
-        register = new EnumMap<>(Banknote.class);
+        banknotes = new EnumMap<>(Banknote.class);
         for (Banknote banknote : Banknote.values()) {
-            register.put(banknote, 0);
+            banknotes.put(banknote, 0);
         }
     }
 
@@ -26,9 +26,9 @@ public class Cashier {
     }
 
     private boolean removeOne(Banknote banknote) {
-        Integer currentCount = register.get(banknote);
+        Integer currentCount = banknotes.get(banknote);
         if (currentCount > 0) {
-            register.put(banknote, currentCount - 1);
+            banknotes.put(banknote, currentCount - 1);
             return true;
         } else {
             return false;
@@ -36,9 +36,9 @@ public class Cashier {
     }
 
     private boolean addOne(Banknote banknote) {
-        Integer currentCount = register.get(banknote);
+        Integer currentCount = banknotes.get(banknote);
         if (currentCount < capacity) {
-            register.put(banknote, currentCount + 1);
+            banknotes.put(banknote, currentCount + 1);
             return true;
         } else {
             return false;
@@ -47,5 +47,13 @@ public class Cashier {
 
     public int getCapacity() {
         return capacity;
+    }
+
+    public boolean hasOne(Banknote banknote) {
+        return has(banknote, 1);
+    }
+
+    public boolean has(Banknote banknote, int howMany) {
+        return banknotes.get(banknote) >= howMany;
     }
 }
